@@ -99,7 +99,7 @@ def main(_argv):
 
         
         
-        
+
 
     while True:
         _, img = vid.read()
@@ -116,6 +116,9 @@ def main(_argv):
         else:
             img = cv2.resize(img,(800,500))
             pass
+        
+
+
 
         # x_min =200
         # x_max =993
@@ -172,17 +175,16 @@ def main(_argv):
         detections = [detections[i] for i in indices]        
 
         # Call the tracker
+
         tracker.predict()
         tracker.update(detections)
+        
 
-    
-       
-
+  
+        
 
         
             
-
-
 
 
 
@@ -212,51 +214,58 @@ def main(_argv):
                 cv2.rectangle(img, (int(bbox[0]), int(bbox[1])), (int(bbox[2]), int(bbox[3])), color, 2)
                 cv2.rectangle(img, (int(bbox[0]), int(bbox[1]-30)), (int(bbox[0])+(len(class_name)+len(str(track.track_id)))*17, int(bbox[1])), color, -1)
             
-            	######### INFO FILE ##########################
-            	center = ((int(bbox[0]) + int(bbox[2]))//2,
-                      	(int(bbox[1]) + int(bbox[3]))//2)
-            	info = {
-                	'frame' : frame_index,
-                	'track_id': track.track_id,
-                	'class' : class_name,
-                	'center' : str((center[0],center[1])),
-                	'detection_box' : str((bbox[0],bbox[1],bbox[2],bbox[3]))
-            	}          
-            	json.dump(info,info_file, indent=3)
-            	##############################################
+                ######### INFO FILE ##########################
+                center = ((int(bbox[0]) + int(bbox[2]))//2,
+                        (int(bbox[1]) + int(bbox[3]))//2)
+                info = {
+                    'frame' : frame_index,
+                    'track_id': track.track_id,
+                    'class' : class_name,
+                    'center' : str((center[0],center[1])),
+                    'detection_box' : str((bbox[0],bbox[1],bbox[2],bbox[3]))
+                }          
+                json.dump(info,info_file, indent=3)
+                ##############################################
             
-           	cv2.putText(img, class_name + "-" + str(track.track_id),(int(bbox[0]), int(bbox[1]-10)),0, 0.75, (255,255,255),2)
+                cv2.putText(img, class_name + "-" + str(track.track_id),(int(bbox[0]), int(bbox[1]-10)),0, 0.75, (255,255,255),2)
 
 
-            #draw predicted boxes
+        #     # draw predicted boxes
         # for track in tracker.predicted:
-            
+        #     if not track.is_confirmed() or track.time_since_update > 1:
+        #         continue 
         #     bbox = track.to_tlbr()
         #     class_name = track.get_class()
-        #     color = colors[int(track.track_id) % len(colors)]
-        #     color = [i * 255 for i in color]
-        #     cv2.rectangle(img, (int(bbox[0]), int(bbox[1])), (int(bbox[2]), int(bbox[3])), color, 2)
-        #     cv2.rectangle(img, (int(bbox[0]), int(bbox[1]-30)), (int(bbox[0])+(len(class_name)+len(str(track.track_id)))*17, int(bbox[1])), color, -1)
+        #     if class_name in allowed_classes:
+
+        #         # color = colors[int(track.track_id) % len(colors)]
+        #         # color = [i * 255 for i in color]
+        #         color = (255, 255, 0)
+
+        #         cv2.rectangle(img, (int(bbox[0]), int(bbox[1])), (int(bbox[2]), int(bbox[3])), color, 2)
+        #         cv2.rectangle(img, (int(bbox[0]), int(bbox[1]-30)), (int(bbox[0])+(len(class_name)+len(str(track.track_id)))*17, int(bbox[1])), color, -1)
             
-        #     ######### INFO FILE ##########################
-        #     center = ((int(bbox[0]) + int(bbox[2]))//2,
-        #               (int(bbox[1]) + int(bbox[3]))//2)
-        #     info = {
-        #         'frame' : frame_index,
-        #         'track_id': track.track_id,
-        #         'class' : class_name,
-        #         'center' : str((center[0],center[1])),
-        #         'detection_box' : str((bbox[0],bbox[1],bbox[2],bbox[3]))
-        #     }          
-        #     json.dump(info,info_file, indent=3)
-        #     ##############################################
+        #         ######### INFO FILE ##########################
+        #         center = ((int(bbox[0]) + int(bbox[2]))//2,
+        #                 (int(bbox[1]) + int(bbox[3]))//2)
+        #         info = {
+        #             'frame' : frame_index,
+        #             'track_id': track.track_id,
+        #             'class' : class_name,
+        #             'center' : str((center[0],center[1])),
+        #             'detection_box' : str((bbox[0],bbox[1],bbox[2],bbox[3]))
+        #         }          
+        #         json.dump(info,info_file, indent=3)
+        #         ##############################################
+
+        #         cv2.putText(img, class_name + "-" + str(track.track_id),(int(bbox[0]), int(bbox[1]-10)),0, 0.75, (255,255,255),2)
+
             
-        #     cv2.putText(img, class_name + "-" + str(track.track_id),(int(bbox[0]), int(bbox[1]-10)),0, 0.75, (255,255,255),2)
 
 
             
-        ### UNCOMMENT BELOW IF YOU WANT CONSTANTLY CHANGING YOLO DETECTIONS TO BE SHOWN ON SCREEN
-        #for det in detections:
+        ## UNCOMMENT BELOW IF YOU WANT CONSTANTLY CHANGING YOLO DETECTIONS TO BE SHOWN ON SCREEN
+        # for det in detections:
         #    bbox = det.to_tlbr() 
         #    cv2.rectangle(img,(int(bbox[0]), int(bbox[1])), (int(bbox[2]), int(bbox[3])),(255,0,0), 2)
         
