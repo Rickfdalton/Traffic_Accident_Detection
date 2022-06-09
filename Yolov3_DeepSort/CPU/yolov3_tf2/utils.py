@@ -157,7 +157,7 @@ def freeze_all(model, frozen=True):
         for l in model.layers:
             freeze_all(l, frozen)
 
-def convert_boxes(image, boxes):
+def convert_boxes(image, boxes, ref):
     returned_boxes = []
     for box in boxes:
         box[0] = (box[0] * image.shape[1]).astype(int)
@@ -169,5 +169,18 @@ def convert_boxes(image, boxes):
         box = box.astype(int)
         box = box.tolist()
         if box != [0,0,0,0]:
-            returned_boxes.append(box)
+            if not ((box[0] <= (ref[0]+ref[2])) and ((box[0]+box[2]) >= (ref[0])) and (box[1] <= (ref[1]+ref[3])) and ((box[1]+box[3]) >= (ref[1]))):
+                returned_boxes.append(box)
     return returned_boxes
+
+# Draw the Predicted Danger Zone
+def drawDangZone(image):
+    frame_Height = image.shape[0]
+    frame_Width = image.shape[1]
+ 
+    points = np.array([[0, 7*frame_Height/8], [frame_Width/6, 2*frame_Height/3], [5*frame_Width/6, 2*frame_Height/3], [frame_Width, 7*frame_Height/8]], np.int32)
+    points = points.reshape((-1, 1, 2))  
+    isClosed = False
+    color = (0, 0, 255)  # Red color in BGR
+    thickness = 3   # Line thickness of 3 px
+    image = cv2.polylines(image, [points], isClosed, color, thickness)

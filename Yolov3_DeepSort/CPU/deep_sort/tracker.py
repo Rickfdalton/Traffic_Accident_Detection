@@ -45,6 +45,8 @@ class Tracker:
 
         self.kf = kalman_filter.KalmanFilter()
         self.tracks = []
+        self.predicted =[]
+
         self._next_id = 1
 
     def predict(self):
@@ -54,6 +56,9 @@ class Tracker:
         """
         for track in self.tracks:
             track.predict(self.kf)
+        
+        self.predicted = [t for t in self.tracks]
+
 
     def update(self, detections):
         """Perform measurement update and track management.
